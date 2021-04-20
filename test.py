@@ -76,23 +76,30 @@ for z in range(len(list_id)-1):
 
 frameAnalyse.close()
 
-linestrack = []
+FileTracking = []
 with open('Tracking.txt','r') as Tracks:
     filetrack = Tracks.read()
     for row in filetrack.splitlines():
-        FileTracking = row.split(" ")
-    #    print(FileTracking)
+        linestack = row.split(" ")
+        FileTracking.append(linestack)
+FileTracking = FileTracking[1:]
+
+#print(type(FileTracking[2]))
 
 # Program to check if a Python list contains elements of another list
-
-
-for index, ID in enumerate(FileTracking)
-    set1 = set(FileTracking)
-    set2 = set(listIDepure)
-    for m in range(len(FileTracking)-1):
-        if set1.intersection(set2):
-            FileTracking[index] =
-
-
+for item in FileTracking:
+    for element in item:
+        if element in listIDepure:
+            print(element)
+            IndexElement = listIDepure.index(element)
+            LongueurIndexe = listCalcFilament[IndexElement]
+            [e.replace(str(element), str(LongueurIndexe)) for e in item]
+            #print("result replacement:" , item)
+            #print("Element change:", element, "par", LongueurIndexe)
+            sec = input('Voilà ce que jai fait\n', )
+            print('Going to sleep for', sec, 'seconds.')
+            time.sleep(int(sec))
+        else:
+            print("This element does not exist", element)
 
 Tracks.close()
