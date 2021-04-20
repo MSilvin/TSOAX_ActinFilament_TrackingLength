@@ -79,12 +79,12 @@ for z in range(len(list_id)-1):
         IDfilament = list_id[z]
 
     else:
-        print("fini pour ce filament")
+        print("Done for this filament n°", IDfilament)
         calc_distance = (IDfilament, lenfilament)
         listCalcFilament.append(calc_distance)
         print("Le filament ID n°", IDfilament, "a pour longueur", lenfilament)
         lenfilament = 0
-print(listCalcFilament)
+#print(listCalcFilament[25])
 
 
 frameAnalyse.close()
