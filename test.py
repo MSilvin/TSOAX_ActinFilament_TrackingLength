@@ -86,20 +86,19 @@ FileTracking = FileTracking[1:]
 
 #print(type(FileTracking[2]))
 
-# Program to check if a Python list contains elements of another list
-for item in FileTracking:
-    for element in item:
-        if element in listIDepure:
-            print(element)
-            IndexElement = listIDepure.index(element)
-            LongueurIndexe = listCalcFilament[IndexElement]
-            [e.replace(str(element), str(LongueurIndexe)) for e in item]
-            #print("result replacement:" , item)
-            #print("Element change:", element, "par", LongueurIndexe)
-            sec = input('Voilà ce que jai fait\n', )
-            print('Going to sleep for', sec, 'seconds.')
-            time.sleep(int(sec))
-        else:
-            print("This element does not exist", element)
+for i in range(len(listIDepure)):
+    for j in range(len(FileTracking)):
+        for k in range(len(FileTracking[j])):
+            if FileTracking[j][k] == listIDepure[i]:
+                FileTracking[j][k] = str(listCalcFilament[i])
+
+
+with open('resultat.txt','w') as resu:
+    for liste in FileTracking:
+        for elem in liste:
+            #print(elem)
+            resu.write(elem+" ")
+        resu.write("\n")
+
 
 Tracks.close()
