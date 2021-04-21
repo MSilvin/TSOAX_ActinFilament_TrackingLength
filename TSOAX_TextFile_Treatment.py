@@ -1,3 +1,5 @@
+##Code for rearranging TSOAX Tracking output raw file
+
 from tkinter import *
 from tkinter.filedialog import askdirectory
 from tkinter.filedialog import askopenfilename
@@ -71,6 +73,7 @@ for i in range (0,longueurComp):
 
 #Calcul part + Return a list of each ID with its total length
 listCalcFilament = []
+listIDepure = []
 lenfilament = 0
 for z in range(len(list_id)-1):
     if list_id[z] == list_id[z+1]:
@@ -79,14 +82,67 @@ for z in range(len(list_id)-1):
         IDfilament = list_id[z]
 
     else:
-        print("Done for this filament n°", IDfilament)
-        calc_distance = (IDfilament, lenfilament)
-        listCalcFilament.append(calc_distance)
-        print("Le filament ID n°", IDfilament, "a pour longueur", lenfilament)
+        #print("Done for this filament n°", IDfilament)
+        #calc_distance = (IDfilament, lenfilament)
+        listCalcFilament.append(lenfilament)
+        listIDepure.append(IDfilament)
+        #print("Le filament ID n°", IDfilament, "a pour longueur", lenfilament)
         lenfilament = 0
-#print(listCalcFilament[25])
 
 
 frameAnalyse.close()
+#print(listCalcFilament[25])
 
 
+#Reading the Tracking file + supp first line "Tracks"
+FileTracking = []
+with open('Tracking.txt','r') as Tracks:
+    filetrack = Tracks.read()
+    for row in filetrack.splitlines():
+        linestack = row.split(" ")
+        FileTracking.append(linestack)
+FileTracking = FileTracking[1:]
+
+#print(type(FileTracking[2]))
+
+#Where you search for ID and replace it by the length of the filament in the Tracking file
+for i in range(len(listIDepure)):
+    for j in range(len(FileTracking)):
+        for k in range(len(FileTracking[j])):
+            if FileTracking[j][k] == listIDepure[i]:
+                FileTracking[j][k] = str(listCalcFilament[i])
+
+
+#Extract the result in a final text file
+with open('TrackingResult.txt','w') as resu:
+    for liste in FileTracking:
+        for elem in liste:
+            #print(elem)
+            resu.write(elem+" ")
+        resu.write("\n")
+
+Tracks.close()
+
+
+'''
+#remove intermediate files
+if os.path.exists("Clean List of Filament.txt"):
+  os.remove("Clean List of Filament.txt")
+else:
+  print("The file does not exist")
+
+if os.path.exists( "DataMicrofilament.txt"):
+  os.remove("DataMicrofilament.txt")
+else:
+  print("The file does not exist")
+
+if os.path.exists("Parameters.txt"):
+  os.remove("Parameters.txt")
+else:
+  print("The file does not exist")
+
+if os.path.exists("Tracking.txt"):
+  os.remove("Tracking.txt")
+else:
+  print("The file does not exist")
+'''
