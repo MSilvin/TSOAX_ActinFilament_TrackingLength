@@ -27,78 +27,94 @@ with open('DataMicrofilament.txt','r') as oldfile, open('Clean List of Filament.
 
 
 
-frameAnalyse = open('Clean List of Filament.txt','r')
-txt = frameAnalyse.read().split()
-
-#print(txt[0])
-id = 0
-list_id=[]
-#pos = 1
-#list_pos = []
-x = 2
-list_x=[]
-y = 3
-list_y=[]
-
-#permet de compter le nombre d'iterations disponibles par frame
-longueurComp = int(len(txt)/6)
+# =============================================================================
+# Init
+# =============================================================================
+class row:
+    def _init_(self):
+        self.id = 0
+        self.c2 = []
+        self.x = []
+        self.y = []
+        self.c5 = []
+        self.c6 = []
 
 
-# Recupere chaque colone et affiche son contenu
-for i in range (0,longueurComp):
-    list_id.append(txt[id])
-    list_x.append(txt[x])
-    list_y.append(txt[y])
+import math
+import re
+import matplotlib.pyplot as plt
 
-    id += 6
-    #pos += 6
-    x += 6
-    y += 6
+doc = open("Clean List of Filament.txt", 'r')
 
-#print(list_id,'\n', list_x,'\n', list_y)
-listCalcFilament = []
-listIDepure = []
-lenfilament = 0
-for z in range(len(list_id)-1):
-    if list_id[z] == list_id[z+1]:
-        lenfilament += sqrt(
-                (float(list_x[z + 1]) - float(list_x[z])) ** 2 + (float(list_y[z + 1]) - float(list_y[z])) ** 2)
-        IDfilament = list_id[z]
+docu = []
+line = doc.readline()
+line = doc.readline()
+# =============================================================================
+# get data
+# =============================================================================
+while line != '':
+    ro = row()
+    nb = re.split("\s+", line)
+    ro.id = nb[0]
+    ro.c2 = nb[1]
+    ro.x = nb[2]
+    ro.y = nb[3]
+    ro.c5 = nb[4]
+    ro.c6 = nb[5]
 
+    docu.append(ro)
+    line = doc.readline()
+
+idActu = docu[0].id
+resultat = {}
+xn = float(docu[0].x)
+yn = float(docu[0].y)
+distance = 0
+# =============================================================================
+# sort data
+# =============================================================================
+for i in range(len(docu)):
+    if idActu == docu[i].id:
+        deltaX = float(docu[i].x) - float(xn)
+        deltaY = float(docu[i].y) - float(yn)
+        d = math.sqrt(deltaX ** 2 + deltaY ** 2)
+        distance += d
+        xn = float(docu[i].x)
+        yn = float(docu[i].y)
     else:
-        #print("Done for this filament n°", IDfilament)
-        #calc_distance = (IDfilament, lenfilament)
-        listCalcFilament.append(lenfilament)
-        listIDepure.append(IDfilament)
-        #print("Le filament ID n°", IDfilament, "a pour longueur", lenfilament)
-        lenfilament = 0
+        xn = float(docu[i].x)
+        yn = float(docu[i].y)
+        resultat[idActu] = distance
+        distance = 0
+        idActu = docu[i].id
+resultat[idActu] = distance
+xplot = []
+yplot = []
+for iden, value in resultat.items():
+    print("Id =", iden, " \t distance = ", value)
+    xplot.append(float(iden))
+    yplot.append(value)
+plt.plot(xplot, yplot, 'r+')
+plt.xlabel('Id')
+plt.ylabel('distance(pixel)')
+plt.show()
+doc.close()
+# =============================================================================
+# switch id with length
+# =============================================================================
+doc = open("Tracking.txt", 'r')
+fulltxt = doc.read()
+lines = re.split("\n", fulltxt)
+mem = []
+for nb in range(len(lines)):
+    woleNb = re.split("\s+", lines[nb])
+    for nb in range(len(woleNb)):
+        if woleNb[nb] != '0' and woleNb[nb] != 'Tracks' and woleNb[nb] != '':
+            woleNb[nb] = resultat[woleNb[nb]]
+    mem.append(woleNb)
+for row in mem:
+    for nb in row:
+        print(nb, end=' ')
+    print()
+doc.close()
 
-
-frameAnalyse.close()
-
-FileTracking = []
-with open('Tracking.txt','r') as Tracks:
-    filetrack = Tracks.read()
-    for row in filetrack.splitlines():
-        linestack = row.split(" ")
-        FileTracking.append(linestack)
-FileTracking = FileTracking[1:]
-
-#print(type(FileTracking[2]))
-
-for i in range(len(listIDepure)):
-    for j in range(len(FileTracking)):
-        for k in range(len(FileTracking[j])):
-            if FileTracking[j][k] == listIDepure[i]:
-                FileTracking[j][k] = str(listCalcFilament[i])
-
-
-with open('resultat.txt','w') as resu:
-    for liste in FileTracking:
-        for elem in liste:
-            #print(elem)
-            resu.write(elem+" ")
-        resu.write("\n")
-
-
-Tracks.close()
