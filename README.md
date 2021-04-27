@@ -1,6 +1,8 @@
 # TSOAX_ActinFilament_TrackingLength.py
 Calcul of Actin Filament Length based on TSOAX text file output.
-author: Marine SILVIN, silvinm@igbmc.fr
+
+Author: Marine SILVIN (silvinm@igbmc.fr)
+
 with the help of : Matthieu BASTO (https://github.com/matthieu66100), Bryan SIENA and Baptiste SION
 
 
